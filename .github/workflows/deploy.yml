@@ -1,0 +1,45 @@
+name: Deploy SuiteCloud Project
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npm test
+
+      - name: Setup NetSuite M2M Authentication
+        run: |
+          npx suitecloud account:setupm2m \
+            --authid "$NETSUITE_AUTH_ID" \
+            --account "$NETSUITE_ACCOUNT_ID" \
+            --certificateid "$NETSUITE_CERTIFICATE_ID" \
+            --privatekeypath "$NETSUITE_PRIVATE_KEY_PATH"
+        env:
+          NETSUITE_AUTH_ID: ${{ secrets.NETSUITE_AUTH_ID }}
+          NETSUITE_ACCOUNT_ID: ${{ secrets.NETSUITE_ACCOUNT_ID }}
+          NETSUITE_CERTIFICATE_ID: ${{ secrets.NETSUITE_CERTIFICATE_ID }}
+          NETSUITE_PRIVATE_KEY_PATH: ${{ secrets.NETSUITE_PRIVATE_KEY_PATH }}
+
+      - name: Deploy to NetSuite
+        run: npm run deploy -- --account "$NETSUITE_ACCOUNT_ID" --authid "$NETSUITE_AUTH_ID"
+        env:
+          NETSUITE_ACCOUNT_ID: ${{ secrets.NETSUITE_ACCOUNT_ID }}
+          NETSUITE_AUTH_ID: ${{ secrets.NETSUITE_AUTH_ID }}
