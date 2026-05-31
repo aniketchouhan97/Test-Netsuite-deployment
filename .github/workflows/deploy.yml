@@ -7,11 +7,6 @@ jobs:
   test_and_deploy:
     runs-on: ubuntu-latest
 
-    # ── These two env vars are THE fix for the error ──
-    env:
-      SUITECLOUD_CI: 1
-      SUITECLOUD_CI_PASSKEY: ${{ secrets.SDF_PASSPHRASE }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -34,19 +29,27 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      # Decode the .p12 file stored as a base64 secret
-      - name: Restore NetSuite Credentials
+      - name: Setup NetSuite Authentication
         run: |
-          mkdir -p ~/.suitecloud-sdk
-          echo "${{ secrets.CREDENTIALS_CI_P12_BASE64 }}" | base64 -d \
-            > ~/.suitecloud-sdk/credentials_ci.p12
-          chmod 600 ~/.suitecloud-sdk/credentials_ci.p12
-
-      - name: Select NetSuite Auth ID
-        run: npx suitecloud account:setup:ci --select "${{ secrets.NETSUITE_AUTH_ID }}"
+          echo "$NETSUITE_PRIVATE_KEY" > private.pem
+          npx suitecloud account:setup:ci \
+            --authid "$NETSUITE_AUTH_ID" \
+            --account "$NETSUITE_ACCOUNT_ID" \
+            --certificateid "$NETSUITE_CERTIFICATE_ID" \
+            --privatekeypath ./private.pem
+        env:
+          NETSUITE_AUTH_ID: ${{ secrets.NETSUITE_AUTH_ID }}
+          NETSUITE_ACCOUNT_ID: ${{ secrets.NETSUITE_ACCOUNT_ID }}
+          NETSUITE_CERTIFICATE_ID: ${{ secrets.NETSUITE_CERTIFICATE_ID }}
+          NETSUITE_PRIVATE_KEY: ${{ secrets.NETSUITE_PRIVATE_KEY }}
+          SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
 
       - name: Validate SDF Project
         run: npx suitecloud project:validate
+        env:
+          SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
 
       - name: Deploy to NetSuite
         run: npm run deploy
+        env:
+          SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
