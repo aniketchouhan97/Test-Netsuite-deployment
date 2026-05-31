@@ -33,7 +33,7 @@ jobs:
           npx suitecloud account:setup:ci \
             --authid "$NETSUITE_AUTH_ID" \
             --account "$NETSUITE_ACCOUNT_ID" \
-            --tokenid "$NETSUITE_TOKEN_ID" \
+            --token "$NETSUITE_TOKEN_ID" \
             --tokensecret "$NETSUITE_TOKEN_SECRET"
         env:
           NETSUITE_AUTH_ID: ${{ secrets.NETSUITE_AUTH_ID }}
