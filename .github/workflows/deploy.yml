@@ -40,6 +40,7 @@ jobs:
           mkdir -p ~/.suitecloud-sdk
           echo "${{ secrets.CREDENTIALS_CI_P12_BASE64 }}" | base64 -d \
             > ~/.suitecloud-sdk/credentials_ci.p12
+          chmod 600 ~/.suitecloud-sdk/credentials_ci.p12
 
       - name: Select NetSuite Auth ID
         run: npx suitecloud account:setup:ci --select "${{ secrets.NETSUITE_AUTH_ID }}"
