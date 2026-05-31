@@ -10,7 +10,7 @@ jobs:
     # ── These two env vars are THE fix for the error ──
     env:
       SUITECLOUD_CI: 1
-      SUITECLOUD_CI_PASSKEY: ${{ secrets.SUITECLOUD_CI_PASSKEY }}
+      SUITECLOUD_CI_PASSKEY: ${{ secrets.SDF_PASSPHRASE }}
 
     steps:
       - name: Checkout Repository
