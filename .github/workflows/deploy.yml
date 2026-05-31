@@ -30,16 +30,17 @@ jobs:
 
       - name: Setup NetSuite Authentication
         run: |
+          echo "$NETSUITE_PRIVATE_KEY" > private.pem
           npx suitecloud account:setup:ci \
             --authid "$NETSUITE_AUTH_ID" \
             --account "$NETSUITE_ACCOUNT_ID" \
-            --token "$NETSUITE_TOKEN_ID" \
-            --tokensecret "$NETSUITE_TOKEN_SECRET"
+            --certificateid "$NETSUITE_CERTIFICATE_ID" \
+            --privatekeypath ./private.pem
         env:
           NETSUITE_AUTH_ID: ${{ secrets.NETSUITE_AUTH_ID }}
           NETSUITE_ACCOUNT_ID: ${{ secrets.NETSUITE_ACCOUNT_ID }}
-          NETSUITE_TOKEN_ID: ${{ secrets.NETSUITE_TOKEN_ID }}
-          NETSUITE_TOKEN_SECRET: ${{ secrets.NETSUITE_TOKEN_SECRET }}
+          NETSUITE_CERTIFICATE_ID: ${{ secrets.NETSUITE_CERTIFICATE_ID }}
+          NETSUITE_PRIVATE_KEY: ${{ secrets.NETSUITE_PRIVATE_KEY }}
           SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
 
       - name: Deploy to NetSuite
