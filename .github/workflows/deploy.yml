@@ -20,7 +20,6 @@ jobs:
     env:
       SUITECLOUD_CI: 1
       SUITECLOUD_CI_PASSKEY: ${{ secrets.SDF_PASSPHRASE }}
-      SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
 
     steps:
       - name: Checkout Repository
@@ -51,20 +50,19 @@ jobs:
             --authid "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_AUTH_ID || secrets.SANDBOX_NETSUITE_AUTH_ID }}" \
             --account "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_ACCOUNT_ID || secrets.SANDBOX_NETSUITE_ACCOUNT_ID }}" \
             --certificateid "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_CERTIFICATE_ID || secrets.SANDBOX_NETSUITE_CERTIFICATE_ID }}" \
-            --privatekeypath "private.pem"
+            --privatekeypath "${{ inputs.environment == 'production' && Production/private.pem || Sandbox/private.pem }}"
         env:
           NETSUITE_AUTH_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_AUTH_ID || secrets.SANDBOX_NETSUITE_AUTH_ID }}
           NETSUITE_ACCOUNT_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_ACCOUNT_ID || secrets.SANDBOX_NETSUITE_ACCOUNT_ID }}
           NETSUITE_CERTIFICATE_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_CERTIFICATE_ID || secrets.SANDBOX_NETSUITE_CERTIFICATE_ID }}
-          NETSUITE_PRIVATE_KEY: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_PRIVATE_KEY || secrets.SANDBOX_NETSUITE_PRIVATE_KEY }}
-          SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
+          SUITECLOUD_CI_PASSKEY: ${{ secrets.SDF_PASSPHRASE }}
 
       - name: Validate SDF Project
         run: npx suitecloud project:validate
         env:
-          SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
+          SUITECLOUD_CI_PASSKEY: ${{ secrets.SDF_PASSPHRASE }}
 
       - name: Deploy to NetSuite
         run: npm run deploy
         env:
-          SDF_PASSPHRASE: ${{ secrets.SDF_PASSPHRASE }}
+          SUITECLOUD_CI_PASSKEY: ${{ secrets.SDF_PASSPHRASE }}
