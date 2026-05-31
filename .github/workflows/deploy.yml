@@ -24,7 +24,10 @@ jobs:
 
       - name: Setup NetSuite M2M Authentication
         run: |
-          npx suitecloud account:setupm2m \
+          # If the private key is stored as a direct string secret, you can write it to a file first:
+          # echo "${{ secrets.NETSUITE_PRIVATE_KEY }}" > private.pem
+          # And then use --privatekeypath private.pem
+          npx suitecloud account:setup:ci \
             --authid "$NETSUITE_AUTH_ID" \
             --account "$NETSUITE_ACCOUNT_ID" \
             --certificateid "$NETSUITE_CERTIFICATE_ID" \
