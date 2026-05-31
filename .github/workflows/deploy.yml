@@ -2,10 +2,20 @@ name: Deploy SuiteCloud Project
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for deployment'
+        required: true
+        type: choice
+        default: 'sandbox'
+        options:
+          - sandbox
+          - production
 
 jobs:
   test_and_deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
     env:
       SUITECLOUD_CI: 1
