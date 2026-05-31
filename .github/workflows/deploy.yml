@@ -41,8 +41,11 @@ jobs:
           echo "${{ secrets.CREDENTIALS_CI_P12_BASE64 }}" | base64 -d \
             > ~/.suitecloud-sdk/credentials_ci.p12
 
+      - name: Select NetSuite Auth ID
+        run: npx suitecloud account:setup:ci --select "${{ secrets.NETSUITE_AUTH_ID }}"
+
       - name: Validate SDF Project
-        run: npx suitecloud project:validate --authid "${{ secrets.NETSUITE_AUTH_ID }}"
+        run: npx suitecloud project:validate
 
       - name: Deploy to NetSuite
-        run: npm run deploy -- --authid "${{ secrets.NETSUITE_AUTH_ID }}"
+        run: npm run deploy
