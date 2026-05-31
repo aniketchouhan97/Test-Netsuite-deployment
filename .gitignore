@@ -39,6 +39,6 @@ Thumbs.db
 # Project config
 project.json
 privateKey.pem
-private.pem
+# private.pem
 public.pem
 clientId.js
