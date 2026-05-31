@@ -45,18 +45,12 @@ jobs:
 
       - name: Setup NetSuite Authentication
         run: |
-          echo "$NETSUITE_PRIVATE_KEY" > private.pem
+          echo "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_PRIVATE_KEY || secrets.SANDBOX_NETSUITE_PRIVATE_KEY }}" > private.pem
           npx suitecloud account:setup:ci \
-            --authid "$NETSUITE_AUTH_ID" \
-            --account "$NETSUITE_ACCOUNT_ID" \
-            --certificateid "$NETSUITE_CERTIFICATE_ID" \
-            --privatekeypath ./private.pem
-        env:
-          NETSUITE_AUTH_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_AUTH_ID || secrets.SANDBOX_NETSUITE_AUTH_ID }}
-          NETSUITE_ACCOUNT_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_ACCOUNT_ID || secrets.SANDBOX_NETSUITE_ACCOUNT_ID }}
-          NETSUITE_CERTIFICATE_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_CERTIFICATE_ID || secrets.SANDBOX_NETSUITE_CERTIFICATE_ID }}
-          NETSUITE_PRIVATE_KEY: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_PRIVATE_KEY || secrets.SANDBOX_NETSUITE_PRIVATE_KEY }}
-          SDF_PASSPHRASE: ${{ inputs.environment == 'production' && secrets.PROD_SDF_PASSPHRASE || secrets.SANDBOX_SDF_PASSPHRASE }}
+            --authid "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_AUTH_ID || secrets.SANDBOX_NETSUITE_AUTH_ID }}" \
+            --account "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_ACCOUNT_ID || secrets.SANDBOX_NETSUITE_ACCOUNT_ID }}" \
+            --certificateid "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_CERTIFICATE_ID || secrets.SANDBOX_NETSUITE_CERTIFICATE_ID }}" \
+            --privatekeypath "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_PRIVATE_KEY || secrets.SANDBOX_NETSUITE_PRIVATE_KEY }}"
 
       - name: Validate SDF Project
         run: npx suitecloud project:validate
