@@ -51,7 +51,7 @@ jobs:
             --authid "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_AUTH_ID || secrets.SANDBOX_NETSUITE_AUTH_ID }}" \
             --account "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_ACCOUNT_ID || secrets.SANDBOX_NETSUITE_ACCOUNT_ID }}" \
             --certificateid "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_CERTIFICATE_ID || secrets.SANDBOX_NETSUITE_CERTIFICATE_ID }}" \
-            --privatekeypath "${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_PRIVATE_KEY || secrets.SANDBOX_NETSUITE_PRIVATE_KEY }}"
+            --privatekeypath "private.pem"
         env:
           NETSUITE_AUTH_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_AUTH_ID || secrets.SANDBOX_NETSUITE_AUTH_ID }}
           NETSUITE_ACCOUNT_ID: ${{ inputs.environment == 'production' && secrets.PROD_NETSUITE_ACCOUNT_ID || secrets.SANDBOX_NETSUITE_ACCOUNT_ID }}
